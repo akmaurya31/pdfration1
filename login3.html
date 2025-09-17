@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>User Login</title>
+  
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
@@ -27,7 +28,6 @@
               </div>
               <button type="submit" class="w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">🔐 Login</button>
             </form>
-            <div id="result" class="text-center text-red-600 mt-2"></div>
             <div class="text-right mt-4">
               <a href="index.html" class="text-blue-600 hover:underline">📝 Sign up</a>
             </div>
@@ -48,47 +48,34 @@
       </h3>
     </div>
   </div>
-
-  <!-- jQuery CDN -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxtALFCWi53aA18mmSvf9BjQlAbBbgMlvNQH5ZaDLTqsaY5Y6GasfdsHGlYHo55u7aXzA/exec";
-
-    document.getElementById("gsForm").addEventListener("submit", function(e){
-      e.preventDefault();
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({ username, password })
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data,"Fff11ff");
-        if (data.status === "success") {
-          // यहाँ server से जो user details मिलेंगी उनको localStorage में save कर सकते हैं:
-          localStorage.setItem('id', data.user.id);
-          localStorage.setItem('username', data.user.username);
-          localStorage.setItem('email', data.user.email);
-          localStorage.setItem('contact_number', data.user.contact_number);
-          localStorage.setItem('is_login', 'true');
-          localStorage.setItem('mynameis', 'amrish');
-          localStorage.setItem('role', data.user.role);
-          localStorage.setItem('current_balance', data.user.current_balance);
-
-          // redirect
-          window.location.href = 'pay.html';
-        } else {
-          document.getElementById("result").textContent = "❌ Login failed. Please check credentials.";
-        }
-      })
-      .catch(err => {
-        console.error("Error:", err);
-        document.getElementById("result").textContent = "⚠️ Error connecting to server.";
-      });
-    });
-  </script>
 </body>
 </html>
+<!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwpW2xltsBne6kzbShKSF9w8NGNwtck-N58zakWmDLcz2VqcT6CR5AcM05tyasp_f55/exec";
+
+  document.getElementById("gsForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify({ username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        document.getElementById("result").textContent = "✅ Login successful! Welcome " + data.user;
+      } else {
+        document.getElementById("result").textContent = "❌ Login failed. Please check credentials.";
+      }
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      document.getElementById("result").textContent = "⚠️ Error connecting to server.";
+    });
+  });
+</script>
