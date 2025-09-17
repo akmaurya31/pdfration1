@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login / Register - jQuery AJAX</title>
+
+  <!-- Tailwind (optional, आप चाहें तो हटा सकते हैं) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <style>
+    /* हल्का centered card style */
+    body { background: #f3f4f6; }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="p-6">
+          <h2 class="text-center text-2xl font-bold mb-4 text-red-600">🔐 User Login / Register</h2>
+
+          <!-- form -->
+          <form id="userForm" class="space-y-4">
+            <div>
+              <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+              <input id="username" name="username" type="text" required
+                     class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring" placeholder="fatima3212">
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input id="email" name="email" type="email" required
+                     class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring" placeholder="fatima@gmail.com">
+            </div>
+
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+              <input id="password" name="password" type="password" required
+                     class="mt-1 block w-full px-3 py-2 border rounded-md focus:outline-none focus:ring" placeholder="••••••••">
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input id="remember" name="remember" type="checkbox" class="h-4 w-4">
+                <label for="remember" class="ml-2 text-sm text-gray-600">Remember me</label>
+              </div>
+              <div>
+                <a href="#" class="text-sm text-blue-600 hover:underline">Forgot?</a>
+              </div>
+            </div>
+
+            <div>
+              <button id="submitBtn" type="submit"
+                      class="w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">
+                🔐 Submit
+              </button>
+            </div>
+
+            <div id="msg" class="text-center text-sm mt-2 text-gray-600"></div>
+          </form>
+
+          <hr class="my-4">
+
+          <p class="text-center text-sm text-gray-500">
+            Or contact: <a href="https://wa.me/917518869428" class="text-blue-600">+91 7518869428</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(function() {
+      // Apps Script endpoint (अपने deployment URL रखिए)
+      const endpoint = "https://script.google.com/macros/s/AKfycbwpW2xltsBne6kzbShKSF9w8NGNwtck-N58zakWmDLcz2VqcT6CR5AcM05tyasp_f55/exec";
+
+      $("#userForm").on("submit", function(e) {
+        e.preventDefault();
+
+        // UI feedback
+        $("#msg").text("");
+        $("#submitBtn").attr("disabled", true).text("Please wait...");
+
+        // collect values
+        const payload = {
+          username: $("#username").val().trim(),
+          email: $("#email").val().trim(),
+          password: $("#password").val().trim()
+        };
+
+        // optional simple validation
+        if (!payload.username || !payload.email || !payload.password) {
+          $("#msg").text("Please fill all fields.");
+          $("#submitBtn").attr("disabled", false).text("🔐 Submit");
+          return;
+        }
+
+        // AJAX settings (आपने जो settings दी थी उसी तरह)
+        const settings = {
+          url: endpoint,
+          method: "POST",
+          timeout: 0,
+          contentType: "application/json",
+          data: JSON.stringify(payload)
+        };
+
+        $.ajax(settings)
+          .done(function(responseText) {
+            // Apps Script कभी-कभी text भेजता है; safe parse
+            let res = responseText;
+            try {
+              if (typeof responseText === "string") res = JSON.parse(responseText);
+            } catch (err) {
+              // अगर JSON parse fail हुआ तो सीधे text दिखा दें
+              console.warn("Could not parse JSON:", err);
+            }
+
+            console.log("Response:", res);
+
+            // अगर आपका Apps Script {status:"success", user:{username:...}} देता है
+            if (res && res.status === "success") {
+              $("#msg").css("color", "green").text("Login successful. Redirecting...");
+              // redirect after short delay
+              setTimeout(function() {
+                window.location.href = "pay.html";
+              }, 900);
+            } else {
+              $("#msg").css("color", "red").text("Incorrect username or password.");
+              $("#submitBtn").attr("disabled", false).text("🔐 Submit");
+            }
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+            console.error("AJAX fail:", textStatus, errorThrown, jqXHR);
+            // Common cause: CORS or 403 from Apps Script
+            $("#msg").css("color", "red").text("Request failed. Check console for details.");
+            $("#submitBtn").attr("disabled", false).text("🔐 Submit");
+            // Helpful hint for debugging
+            if (jqXHR.status === 0) {
+              console.warn("Likely CORS or network issue. Ensure the Apps Script is deployed with 'Who has access: Anyone'.");
+            }
+          });
+      });
+    });
+  </script>
+</body>
+</html>
