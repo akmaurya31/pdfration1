@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>User Login</title>
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwN_wNh6cbcr0bGNxXlSzoxbp6xURtWr1jBoHSzrjfjWCl-e6Xo5KrLv5QJ3Yx2ra8w/exec"; // 👈 यहाँ Apps Script URL डालें
+
+    function loginUser(event) {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      fetch(scriptURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert("✅ Login successful! Welcome " + data.user.username);
+          window.location.href = "pay.html";
+        } else {
+          alert("❌ Incorrect username or password.");
+        }
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("⚠ Login failed. Please try again.");
+      });
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div class="container mx-auto mt-5 max-w-[1320px]">
+    <div class="flex justify-center">
+      <div class="w-full max-w-md">
+        <div class="bg-white shadow-lg rounded-lg">
+          <div class="p-6">
+            <h5 class="text-center text-red-600 font-bold text-lg mb-4">🔐 User Login Form</h5>
+            <form id="loginForm" onsubmit="loginUser(event)">
+              <div class="mb-4">
+                <label for="username" class="block font-bold text-gray-700 mb-1">User ID :</label>
+                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded" id="username" name="username" placeholder="Enter User ID">
+              </div>
+              <div class="mb-4">
+                <label for="password" class="block font-bold text-gray-700 mb-1">Password :</label>
+                <input type="password" class="w-full px-3 py-2 border border-gray-300 rounded" id="password" name="password" placeholder="Enter Password">
+              </div>
+              <div class="mb-4 flex items-center">
+                <input type="checkbox" class="h-4 w-4 text-blue-600 border-gray-300 rounded mr-2" id="remember">
+                <label class="text-gray-700 font-bold" for="remember">Remember</label>
+              </div>
+              <button type="submit" class="w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">🔐 Login</button>
+            </form>
+            <div class="text-right mt-4">
+              <a href="index.html" class="text-blue-600 hover:underline">📝 Sign up</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="justify-center pb-6">
+      <h1 class="text-center text-xl font-bold mt-6">Amrish Digital CSC Center - 📞 7518869428</h1>
+      <h2 class="text-center text-lg mt-2">📍 Address: 295/5, Deen Dayal Road, Asharfabad, Lucknow, Uttar Pradesh 226003</h2>
+      <h3 class="text-center mt-4">
+        अगर आप अपना यूजरनेम या पासवर्ड भूल गए हैं, तो चिंता मत करें! 😊<br/>
+        कृपया हमें तुरंत WhatsApp करें: 📱 
+        <a href="https://wa.me/917518869428" target="_blank" class="text-blue-600 hover:underline">
+          +91 7518869428 📞
+        </a>
+        Don't just call, text me on WhatsApp too हम आपकी मदद के लिए यहाँ हैं! 🙌
+      </h3>
+    </div>
+  </div>
+</body>
+</html>
