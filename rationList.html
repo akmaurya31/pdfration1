@@ -1,0 +1,79 @@
+<div id="header"></div>
+<div class="container my-4 mx-auto">
+  <h4 class="text-xl text-center bg-blue-500 text-white py-2 my-4 rounded font-bold mx-auto w-[30%]">🧑All Ration List🛒</h4>
+
+  <div class="max-w-[1350px] mx-auto text-center py-2">
+    <input type="text" id="searchInput" placeholder="Search by Mobile, Name or Ration Card" class="border p-2 w-[50%]" />
+    <button onclick="loadData(1)" class="bg-blue-500 text-white py-2 px-4 rounded">Search</button>
+  </div>
+
+  <div class="max-w-[1350px] mx-auto">
+    <table id="requestTable" class="w-full text-sm text-left text-black-500">
+      <thead class="bg-gray-100 border-b border-gray-200">
+        <tr class="text-left">
+          <th class="px-6 py-3 font-bold text-gray-700">Sn</th>
+          <th class="px-6 py-3 font-bold text-gray-700">User ID</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Candidate Name</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Janpad</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Ration Card No.</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Action</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <div class="flex justify-between items-center mt-4 mx-auto">
+      <span id="pageInfo" class="text-gray-600"></span>
+      <div>
+        <button onclick="prevPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Previous</button>
+        <button onclick="nextPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentPage = 1;
+let totalPages = 1;
+
+function loadData(page) {
+  const search = document.getElementById('searchInput').value;
+  const role = 'admin'; // या 'user'
+  const userId = '123'; // user का id
+
+  fetch(`https://script.google.com/macros/s/AKfycbyTu4eMHfZ9aIxXem8BD4g8hrwpU8vzZ9gdAxVuScRigtuWJDVwPh9shS3sXevLx8-EZA/exec?page=${page}&search=${encodeURIComponent(search)}&role=${role}&userId=${userId}`)
+    .then(res => res.json())
+    .then(data => {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+      data.data.forEach((row, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="px-6 py-3 font-bold">${i + 1 + (page - 1) * 10}</td>
+            <td class="px-6 py-3 font-bold">${row.contact_number}<br/>Balance</td>
+            <td class="px-6 py-3 font-bold">${row.name}</td>
+            <td class="px-6 py-3 font-bold">${row.janpad}<br/>${row.edate}</td>
+            <td class="px-6 py-3 font-bold">${row.ration}</td>
+            <td class="px-6 py-3">
+              <a class="text-blue-500 hover:underline" target="_blank" href="${row.pdf_path}">Download PDF</a>
+            </td>
+          </tr>`;
+      });
+
+      currentPage = data.page;
+      totalPages = data.totalPages;
+      document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
+    })
+    .catch(err => console.error(err));
+}
+
+function prevPage() {
+  if (currentPage > 1) loadData(currentPage - 1);
+}
+
+function nextPage() {
+  if (currentPage < totalPages) loadData(currentPage + 1);
+}
+
+loadData(1);
+</script>
+  <script src="script.js"></script>
