@@ -1,7 +1,0 @@
-/vendor/
-vendor/
-.env
-pdfvendor.php
-pdfvendor.php
-composer.lock
-node_modules
