@@ -3,35 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>User Login</title>
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxpVzjIElNa8iCzMfb35dcYh8HjlaIQ4SJoQovMzGxEM4k0URvYsnt_bOyRF7X_8KjBHg/exec"; // 👈 यहाँ Apps Script URL डालें
-
-    function loginUser(event) {
-      event.preventDefault();
-
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      fetch(scriptURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          alert("✅ Login successful! Welcome " + data.user.username);
-          window.location.href = "pay.html";
-        } else {
-          alert("❌ Incorrect username or password.");
-        }
-      })
-      .catch(err => {
-        console.error("Error:", err);
-        alert("⚠ Login failed. Please try again.");
-      });
-    }
-  </script>
+  
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
@@ -41,7 +13,7 @@
         <div class="bg-white shadow-lg rounded-lg">
           <div class="p-6">
             <h5 class="text-center text-red-600 font-bold text-lg mb-4">🔐 User Login Form</h5>
-            <form id="loginForm" onsubmit="loginUser(event)">
+            <form id="gsForm">
               <div class="mb-4">
                 <label for="username" class="block font-bold text-gray-700 mb-1">User ID :</label>
                 <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded" id="username" name="username" placeholder="Enter User ID">
@@ -78,3 +50,32 @@
   </div>
 </body>
 </html>
+<!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwpW2xltsBne6kzbShKSF9w8NGNwtck-N58zakWmDLcz2VqcT6CR5AcM05tyasp_f55/exec";
+
+  document.getElementById("gsForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify({ username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        document.getElementById("result").textContent = "✅ Login successful! Welcome " + data.user;
+      } else {
+        document.getElementById("result").textContent = "❌ Login failed. Please check credentials.";
+      }
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      document.getElementById("result").textContent = "⚠️ Error connecting to server.";
+    });
+  });
+</script>
