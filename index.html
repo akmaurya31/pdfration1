@@ -1,5 +1,5 @@
 <?php include('headerFront.php'); ?>
-
+<div id="headerFront"></div>
 
 
 
@@ -53,9 +53,9 @@
       <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">📝 Signup</button>
       
       <div class="text-right mt-4">
-        <a href="login.php" class="text-blue-600 hover:underline">🔐 Login</a>
+        <a href="login.html" class="text-blue-600 hover:underline">🔐 Login</a>
       </div>
-      <a href="job.php" target="_blank" class="flex flex-col text-blue-400 hover:text-blue-300 inline-flex items-center">
+      <a href="job.html" target="_blank" class="flex flex-col text-blue-400 hover:text-blue-300 inline-flex items-center">
       <img src="./images/bharatjob.jpeg" class="rounded-xl mt-4 "   />
     </a>
     </form>
@@ -136,3 +136,25 @@
 </div>
 
 <?php include('footer.php'); ?>
+<div id="footer"></div>
+
+
+<script>
+  // header.html को लोड कराके div में डाल देगा
+  fetch('headerFront.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('headerFront').innerHTML = html;
+    })
+    .catch(err => console.error('Header load error', err));
+</script>
+
+<script>
+  // header.html को लोड कराके div में डाल देगा
+  fetch('footer.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('footer').innerHTML = html;
+    })
+    .catch(err => console.error('Footer load error', err));
+</script>
