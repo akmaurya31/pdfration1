@@ -66,20 +66,24 @@
       })
       .then(res => res.json())
       .then(data => {
-        console.log(data,"Fff11ff");
+            const u = data.user; // array
+            console.log(u,"Ffff");
         if (data.status === "success") {
-          // यहाँ server से जो user details मिलेंगी उनको localStorage में save कर सकते हैं:
-          localStorage.setItem('id', data.user.id);
-          localStorage.setItem('username', data.user.username);
-          localStorage.setItem('email', data.user.email);
-          localStorage.setItem('contact_number', data.user.contact_number);
-          localStorage.setItem('is_login', 'true');
-          localStorage.setItem('mynameis', 'amrish');
-          localStorage.setItem('role', data.user.role);
-          localStorage.setItem('current_balance', data.user.current_balance);
-
+            localStorage.setItem('id', u[0]);               // id
+            localStorage.setItem('username', u[1]);         // username
+            localStorage.setItem('email', u[6]);            // email
+            localStorage.setItem('contact_number', u[3]);   // contact number
+            localStorage.setItem('is_login', 'true');
+            localStorage.setItem('mynamei1s', 'amri11sh');
+            localStorage.setItem('role', u[8]); 
           // redirect
-          window.location.href = 'pay.html';
+        //   window.location.href = 'pay.html';
+            updateWalletBalance(u[0]).then(() => {
+                window.location.href = 'pay.html';
+            }).catch(err => {
+                console.error("wallet fetch error", err);
+                window.location.href = 'pay.html'; // error होने पर भी redirect
+            });
         } else {
           document.getElementById("result").textContent = "❌ Login failed. Please check credentials.";
         }
@@ -89,6 +93,37 @@
         document.getElementById("result").textContent = "⚠️ Error connecting to server.";
       });
     });
+
+
+
+
+function updateWalletBalance(userId) {
+  return fetch("https://script.google.com/macros/s/AKfycbzR47I7PSpKa-7N6VUfNHJOrXaF3tB7r2_i3odT-D3mW60g-hasS58naltkmgrrwumLDw/exec", {
+    method: "POST",
+    body: JSON.stringify({ action: "getCurWalletCache", userId: userId }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Wallet response:", data);
+
+      if (data && data.current_balance !== undefined) {
+        // DOM update
+        const el = document.getElementById('roinc');
+        if (el) el.innerText = data.current_balance;
+
+        // Local storage set
+        localStorage.setItem('current_balance', data.current_balance);
+
+        return data.current_balance; // चाहो तो return भी कर सकते हो
+      } else {
+        throw new Error("current_balance missing in response");
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching wallet balance:', err);
+      return null;
+    });
+}
   </script>
 </body>
 </html>

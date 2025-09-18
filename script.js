@@ -7,14 +7,19 @@
     .catch(err => console.error('Header load error', err));
 
 
-    // Fetch wallet balance from Apps Script
-  fetch("https://script.google.com/macros/s/AKfycbwfafWuI6kSe8mLJifDTJt8Kxo20151vRw1SldTJ5gsXv36rL66Dd2mZdvBM5RbXp-GRA/exec", {
-    method: "POST",
-    body: JSON.stringify({ action: "getWallet", userId: 2 })
-  })
-    .then(res => res.json())
-    .then(data => {
-        console.log("fff",data);
-        document.getElementById('roinc').innerText = data.current_balance;
-    })
-    .catch(err => console.error('Error:', err));
+
+      
+  function waitForBalanceAndUpdate() {
+
+  const interval = setInterval(() => {
+    const balance = localStorage.getItem('current_balance');
+    console.log("Ffff");
+    if (balance !== null) {        // value आ गई
+      document.getElementById('roinc').innerText = balance;
+      clearInterval(interval);     // interval बंद कर दो
+    }
+  }, 100); // हर 100ms में check
+}
+
+// page load पर call करो
+waitForBalanceAndUpdate();

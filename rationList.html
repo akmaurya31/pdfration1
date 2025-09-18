@@ -22,25 +22,29 @@
       <tbody id="tableBody"></tbody>
     </table>
     <div class="flex justify-between items-center mt-4 mx-auto">
-      <span id="pageInfo" class="text-gray-600"></span>
-      <div>
+    <span id="pageInfo" class="text-gray-600"></span>
+    <div class="flex items-center space-x-2">
+        <input type="number" id="pageNumberInput" placeholder="Page #" class="border p-1 w-16 text-center">
+        <button onclick="goToPage()" class="bg-green-500 text-white py-1 px-4 rounded">Go</button>
         <button onclick="prevPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Previous</button>
         <button onclick="nextPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Next</button>
-      </div>
+    </div>
     </div>
   </div>
 </div>
 
-<script>
+<script> 
+
 let currentPage = 1;
 let totalPages = 1;
+let totalRecords = 0;
 
 function loadData(page) {
   const search = document.getElementById('searchInput').value;
-  const role = 'admin'; // या 'user'
-  const userId = '123'; // user का id
+  const role = localStorage.getItem('role') || '';   // admin/user
+  const userId = localStorage.getItem('id') || '';
 
-  fetch(`https://script.google.com/macros/s/AKfycbyTu4eMHfZ9aIxXem8BD4g8hrwpU8vzZ9gdAxVuScRigtuWJDVwPh9shS3sXevLx8-EZA/exec?page=${page}&search=${encodeURIComponent(search)}&role=${role}&userId=${userId}`)
+  fetch(`https://script.google.com/macros/s/AKfycbyTu4eMHfZ9aIxXem8BD4g8hrwpU8vzZ9gdAxVuScRigtuWJDVwPh9shS3sXevLx8-EZA/exec?page=${page}&search=${search}&role=${role}&userId=${userId}`)
     .then(res => res.json())
     .then(data => {
       const tbody = document.getElementById('tableBody');
@@ -61,7 +65,10 @@ function loadData(page) {
 
       currentPage = data.page;
       totalPages = data.totalPages;
-      document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
+      totalRecords = data.totalRecords;
+
+      document.getElementById('pageInfo').innerText =
+        `Page ${currentPage} of ${totalPages} — Total Records: ${totalRecords}`;
     })
     .catch(err => console.error(err));
 }
@@ -74,6 +81,18 @@ function nextPage() {
   if (currentPage < totalPages) loadData(currentPage + 1);
 }
 
+function goToPage() {
+  const pageInput = parseInt(document.getElementById('pageNumberInput').value, 10);
+  if (!isNaN(pageInput) && pageInput >= 1 && pageInput <= totalPages) {
+    loadData(pageInput);
+  } else {
+    alert('Please enter a valid page number between 1 and ' + totalPages);
+  }
+}
+
 loadData(1);
+
+
+
 </script>
   <script src="script.js"></script>
