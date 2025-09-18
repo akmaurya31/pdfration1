@@ -32,10 +32,10 @@
     </div>
   </div>
 </div>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script> 
-
-let currentPage = 1;
+ let currentPage = 1;
 let totalPages = 1;
 let totalRecords = 0;
 
@@ -46,16 +46,28 @@ function loadData(page) {
   const contact_number = localStorage.getItem('contact_number') || 0;
   const current_balance = localStorage.getItem('current_balance') || 0;
 
-  fetch(`https://script.google.com/macros/s/AKfycbyTu4eMHfZ9aIxXem8BD4g8hrwpU8vzZ9gdAxVuScRigtuWJDVwPh9shS3sXevLx8-EZA/exec?page=${page}&search=${search}&role=${role}&userId=${userId}`)
+  // SweetAlert loader दिखाएँ
+  Swal.fire({
+    title: 'Fetching Data...',
+    text: 'कृपया प्रतीक्षा करें',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+
+  fetch(`https://script.google.com/macros/s/AKfycbyTu4eMHfZ9aIxXem8BD4g8hrwpU8vzZ9gdAxVuScRigtuWJDVwPh9shS3sXevLx8-EZA/exec?page=${page}&search=${encodeURIComponent(search)}&role=${role}&userId=${userId}`)
     .then(res => res.json())
     .then(data => {
+      Swal.close(); // loader बंद करें
+
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
       data.data.forEach((row, i) => {
         tbody.innerHTML += `
           <tr>
             <td class="px-6 py-3 font-bold">${i + 1 + (page - 1) * 10}</td>
-            <td class="px-6 py-3 font-bold">${contact_number}<br/>Balance:${current_balance}</td>
+            <td class="px-6 py-3 font-bold">${contact_number}<br/>Balance: ${current_balance}</td>
             <td class="px-6 py-3 font-bold">${row.name}</td>
             <td class="px-6 py-3 font-bold">${row.janpad}<br/>${row.edate}</td>
             <td class="px-6 py-3 font-bold">${row.ration}</td>
@@ -72,7 +84,15 @@ function loadData(page) {
       document.getElementById('pageInfo').innerText =
         `Page ${currentPage} of ${totalPages} — Total Records: ${totalRecords}`;
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+      Swal.close(); // loader बंद करें
+      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Data fetch करने में समस्या हुई।'
+      });
+    });
 }
 
 function prevPage() {
@@ -92,8 +112,8 @@ function goToPage() {
   }
 }
 
+// पहले page को load करें
 loadData(1);
-
 
 
 </script>

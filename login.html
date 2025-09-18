@@ -128,32 +128,68 @@ document.getElementById("gsForm").addEventListener("submit", function(e){
   });
 });
 
-
 function updateWalletBalance(userId) {
+  // SweetAlert loader दिखाएँ
+  Swal.fire({
+    title: 'Fetching Wallet Balance...',
+    text: 'कृपया प्रतीक्षा करें',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+
   return fetch("https://script.google.com/macros/s/AKfycbzR47I7PSpKa-7N6VUfNHJOrXaF3tB7r2_i3odT-D3mW60g-hasS58naltkmgrrwumLDw/exec", {
     method: "POST",
     body: JSON.stringify({ action: "getCurWalletCache", userId: userId }),
   })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Wallet response:", data);
+  .then(res => res.json())
+  .then(data => {
+    Swal.close(); // loader बंद करें
 
-      if (data && data.current_balance !== undefined) {
-        const el = document.getElementById('roinc');
-        if (el) el.innerText = data.current_balance;
+    console.log("Wallet response:", data);
 
-        localStorage.setItem('current_balance', data.current_balance);
+    if (data && data.current_balance !== undefined) {
+      const el = document.getElementById('roinc');
+      if (el) el.innerText = data.current_balance;
 
-        return data.current_balance;
-      } else {
-        throw new Error("current_balance missing in response");
-      }
-    })
-    .catch(err => {
-      console.error('Error fetching wallet balance:', err);
-      return null;
+      localStorage.setItem('current_balance', data.current_balance);
+
+      // SweetAlert success
+      Swal.fire({
+        icon: 'success',
+        title: 'Wallet Updated!',
+        text: `आपका current balance ₹${data.current_balance} है।`,
+        timer: 2000,
+        showConfirmButton: false
+      });
+
+      return data.current_balance;
+    } else {
+      // SweetAlert error
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Wallet balance fetch नहीं हो पाया।'
+      });
+      throw new Error("current_balance missing in response");
+    }
+  })
+  .catch(err => {
+    Swal.close(); // loader बंद करें
+    console.error('Error fetching wallet balance:', err);
+
+    // SweetAlert error
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Wallet balance fetch करने में समस्या हुई।'
     });
+
+    return null;
+  });
 }
+
 </script>
 </body>
 </html>
