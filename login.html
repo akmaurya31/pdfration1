@@ -51,49 +51,82 @@
 
   <!-- jQuery CDN -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwYMslYJEbPR_GPGaIbpj12qp6xOun9aMmvtagHzqKloqKhu1Z76MFZk8Tx3tLoHcGPbg/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwYMslYJEbPR_GPGaIbpj12qp6xOun9aMmvtagHzqKloqKhu1Z76MFZk8Tx3tLoHcGPbg/exec";
 
-    document.getElementById("gsForm").addEventListener("submit", function(e){
-      e.preventDefault();
+document.getElementById("gsForm").addEventListener("submit", function(e){
+  e.preventDefault();
 
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-      fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({ username, password })
-      })
-      .then(res => res.json())
-      .then(data => {
-            const u = data.user; // array
-        if (data.status === "success") {
-            localStorage.setItem('id', u[0]);               // id
-            localStorage.setItem('username', u[1]);         // username
-            localStorage.setItem('email', u[6]);            // email
-            localStorage.setItem('contact_number', u[3]);   // contact number
-            localStorage.setItem('is_login', 'true');
-            localStorage.setItem('mynamei1s', 'amri11sh');
-            localStorage.setItem('role', u[8]); 
-          // redirect
-        //   window.location.href = 'pay.html';
-            updateWalletBalance(u[0]).then(() => {
-                window.location.href = 'pay.html';
-            }).catch(err => {
-                console.error("wallet fetch error", err);
-                window.location.href = 'pay.html'; // error होने पर भी redirect
-            });
-        } else {
-          document.getElementById("result").textContent = "❌ Login failed. Please check credentials.";
-        }
-      })
-      .catch(err => {
-        console.error("Error:", err);
-        document.getElementById("result").textContent = "⚠️ Error connecting to server.";
+  // Loader popup
+  Swal.fire({
+    title: 'Logging in…',
+    text: 'कृपया प्रतीक्षा करें',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  fetch(scriptURL, {
+    method: "POST",
+    body: JSON.stringify({ username, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    const u = data.user; // array
+
+    Swal.close(); // loader close
+
+    if (data.status === "success") {
+      // LocalStorage set
+      localStorage.setItem('id', u[0]);               // id
+      localStorage.setItem('username', u[1]);         // username
+      localStorage.setItem('email', u[6]);            // email
+      localStorage.setItem('contact_number', u[3]);   // contact number
+      localStorage.setItem('is_login', 'true');
+      localStorage.setItem('mynamei1s', 'amri11sh');
+      localStorage.setItem('role', u[8]); 
+
+      // Success popup
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful',
+        text: 'Welcome ' + u[1],
+        timer: 1500,
+        showConfirmButton: false
       });
+
+      // Wallet balance update + redirect
+      updateWalletBalance(u[0])
+        .then(() => {
+          setTimeout(() => window.location.href = 'pay.html', 1500);
+        })
+        .catch(err => {
+          console.error("wallet fetch error", err);
+          setTimeout(() => window.location.href = 'pay.html', 1500);
+        });
+
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: 'कृपया यूजरनेम/पासवर्ड जांचें'
+      });
+    }
+  })
+  .catch(err => {
+    console.error("Error:", err);
+    Swal.close();
+    Swal.fire({
+      icon: 'error',
+      title: 'Network Error',
+      text: 'सर्वर से कनेक्शन नहीं हो पाया।'
     });
-
-
+  });
+});
 
 
 function updateWalletBalance(userId) {
@@ -106,14 +139,12 @@ function updateWalletBalance(userId) {
       console.log("Wallet response:", data);
 
       if (data && data.current_balance !== undefined) {
-        // DOM update
         const el = document.getElementById('roinc');
         if (el) el.innerText = data.current_balance;
 
-        // Local storage set
         localStorage.setItem('current_balance', data.current_balance);
 
-        return data.current_balance; // चाहो तो return भी कर सकते हो
+        return data.current_balance;
       } else {
         throw new Error("current_balance missing in response");
       }
@@ -123,6 +154,6 @@ function updateWalletBalance(userId) {
       return null;
     });
 }
-  </script>
+</script>
 </body>
 </html>

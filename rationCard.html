@@ -90,9 +90,10 @@
 
 <!-- Footer यहां load होगा -->
 <div id="footer"></div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-  // header.html और footer.html को load कर सकते हो
+  // header & footer load
   fetch('header.html')
     .then(res => res.text())
     .then(html => document.getElementById('header').innerHTML = html);
@@ -101,20 +102,59 @@
     .then(res => res.text())
     .then(html => document.getElementById('footer').innerHTML = html);
 
-  fetch('https://script.google.com/macros/s/AKfycbwmWwGzpK6G3hj4lEH2XjE48J8CVCMjWPGY_eyw532a6AVDCEazg4EADrcQu60LJN_Amg/exec', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(formData)
-})
-.then(res => res.json())
-.then(data => {
-  console.log('Server response:', data);
-})
-.catch(err => console.error('Error:', err));
+  // form submit
+  document.getElementById('rationForm').addEventListener('submit', function (e) {
+    e.preventDefault();
 
+    const formData = {
+      name: document.getElementById('name').value,
+      adhar: document.getElementById('adhar').value,
+      ration: document.getElementById('ration').value,
+      janpad: document.getElementById('janpad').value
+    };
 
+    // loading popup दिखाओ
+    Swal.fire({
+      title: 'Saving your request…',
+      text: 'कृपया प्रतीक्षा करें',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    fetch('https://script.google.com/macros/s/AKfycbwQx7Lr6HJvsbFY9ndPFb0AoFbP2-55iPWM-Gz2qSOyeG-QT0oRTuwDtLrcAo_h2UXC/exec', {
+      method: 'POST',
+      body: JSON.stringify(formData)
+    })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close(); // loading बंद करो
+        if (data.status === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: 'Request Saved!',
+            text: 'आपका अनुरोध सफलतापूर्वक सेव हो गया। 15-20 मिनट में PDF उपलब्ध होगा।'
+          });
+          document.getElementById('rationForm').reset();
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'डेटा सेव करने में समस्या आई।'
+          });
+        }
+      })
+      .catch(err => {
+        Swal.close();
+        Swal.fire({
+          icon: 'error',
+          title: 'Network Error',
+          text: 'सर्वर से कनेक्शन नहीं हो पाया।'
+        });
+        console.error(err);
+      });
+  });
 </script>
 
 </body>
