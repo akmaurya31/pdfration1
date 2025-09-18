@@ -52,7 +52,7 @@
   <!-- jQuery CDN -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxtALFCWi53aA18mmSvf9BjQlAbBbgMlvNQH5ZaDLTqsaY5Y6GasfdsHGlYHo55u7aXzA/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwYMslYJEbPR_GPGaIbpj12qp6xOun9aMmvtagHzqKloqKhu1Z76MFZk8Tx3tLoHcGPbg/exec";
 
     document.getElementById("gsForm").addEventListener("submit", function(e){
       e.preventDefault();
@@ -67,7 +67,6 @@
       .then(res => res.json())
       .then(data => {
             const u = data.user; // array
-            console.log(u,"Ffff");
         if (data.status === "success") {
             localStorage.setItem('id', u[0]);               // id
             localStorage.setItem('username', u[1]);         // username

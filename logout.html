@@ -1,0 +1,9 @@
+<script>
+function logout() {
+  localStorage.clear();
+  window.location.href = 'index.html'; // या सही path
+}
+
+// जैसे ही page load हो, logout function call हो जाए
+window.addEventListener('load', logout);
+</script>
