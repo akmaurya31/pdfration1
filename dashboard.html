@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ration Image Page</title>
+  <script>
+    // Header include function
+    function includeHeader() {
+      fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header').innerHTML = data;
+        });
+    }
+
+    // Footer include function
+    function includeFooter() {
+      fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer').innerHTML = data;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      includeHeader();
+      includeFooter();
+    });
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+  <!-- Header -->
+  <div id="header"></div>
+
+  <!-- Main Content -->
+  <div class="max-w-[1350px] mx-auto">
+    <div class="flex items-center justify-center h-screen shadow-3xl border-2 rounded p-4 m-4 bg-white">
+      <img class="sm:max-w-[50%] md:max-w-[60%] m-4 p-4" src="images/rr1.jpeg" alt="Ration Image" />
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div id="footer"></div>
+
+</body>
+</html>
