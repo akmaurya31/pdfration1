@@ -56,12 +56,20 @@
         <li>
           <a href="pay.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">💰Recharge</a>
         </li>
-        <li>
+
+
+        <!-- <li>
           <a href="userList.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">📋User List</a>
-        </li>
+        </li> -->
+
+        <div id="menuList"></div>
+
+
         <li>
           <a href="wallet.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">👛Wallet ₹ <span id="roinc">0</span></a>
         </li>
+
+        
         <li>
           <a href="logout.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">🚪 Logout</a>
         </li>
@@ -91,9 +99,28 @@
       .catch(err => console.error(`${item.file} load error:`, err));
   });
 
+
+  
   
 </script>
   <script src="script.js"></script>
+
+
+  <script>
+  const role = localStorage.getItem('role') || 'user'; // user या admin
+  const menuList = document.getElementById('menuList');
+
+  // Admin link केवल अगर role 'admin' है तब दिखाएँ
+  if (role === 'admin') {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <a href="userList.html" 
+         class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">
+        📋 User List
+      </a>`;
+    menuList.appendChild(li);
+  }
+</script>
 
 
 </body>
