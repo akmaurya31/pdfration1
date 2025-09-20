@@ -68,7 +68,20 @@
     .then(res => res.json())
     .then(data => {
       if (data.status === "success") {
-        document.getElementById("result").textContent = "✅ Login successful! Welcome " + data.user;
+     //   document.getElementById("result").textContent = "✅ Login successful! Welcome " + data.user;
+
+          $_SESSION['idd'] = trim($row['id']); // Assuming 'id' is another field in your 'users' table
+              $_SESSION['username'] = trim($row['username']);
+              $_SESSION['email'] = trim($row['email']);
+              $_SESSION['contact_number'] = trim($row['contact_number']);
+              $_SESSION['is_login'] = true;
+              $_SESSION['role'] = trim($row['role']);
+              $_SESSION['current_balance'] = trim($row['current_balance']);
+
+              $_SESSION  ki jagah local stroge me save kr do 
+
+
+
       } else {
         document.getElementById("result").textContent = "❌ Login failed. Please check credentials.";
       }

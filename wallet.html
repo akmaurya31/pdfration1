@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wallet History</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+<!-- Header Include -->
+<div id="header"></div>
+
+<div class="container my-4 mx-auto">
+  <h4 class="text-xl text-center bg-blue-500 text-white py-2 my-4 rounded font-bold mx-auto w-[30%]">
+    💰 Wallet History
+  </h4>
+
+  <div class="max-w-[1350px] mx-auto text-center py-2">
+    <input type="text" id="searchInput" placeholder="Search by Transaction ID, User ID" class="border p-2 w-[50%]" />
+    <button onclick="loadData(1)" class="bg-blue-500 text-white py-2 px-4 rounded">Search</button>
+  </div>
+
+  <div class="max-w-[1350px] mx-auto mt-4">
+    <table id="walletTable" class="w-full text-sm text-left text-black-500">
+      <thead class="bg-gray-100 border-b border-gray-200">
+        <tr class="text-left">
+          <th class="px-6 py-3 font-bold text-gray-700">Sn</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Date</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Credit</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Debit</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Current Balance</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Transaction ID</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <div class="flex justify-between items-center mt-4 mx-auto">
+      <span id="pageInfo" class="text-gray-600"></span>
+      <div class="flex items-center space-x-2">
+        <input type="number" id="pageNumberInput" placeholder="Page #" class="border p-1 w-16 text-center">
+        <button onclick="goToPage()" class="bg-green-500 text-white py-1 px-4 rounded">Go</button>
+        <button onclick="prevPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Previous</button>
+        <button onclick="nextPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Include -->
+<div id="footer" class="mt-10"></div>
+
+<script>
+  // Header/Footer include
+  fetch('header.html').then(res => res.text()).then(html => document.getElementById('header').innerHTML = html);
+  fetch('footer.html').then(res => res.text()).then(html => document.getElementById('footer').innerHTML = html);
+
+  let currentPage = 1;
+  let totalPages = 1;
+  let totalRecords = 0;
+
+  function loadData(page) {
+    const search = document.getElementById('searchInput').value;
+    const role = localStorage.getItem('role') || '';
+    const userId = localStorage.getItem('id') || '';
+
+    Swal.fire({
+      title: 'Fetching Data...',
+      text: 'कृपया प्रतीक्षा करें',
+      allowOutsideClick: false,
+      didOpen: () => Swal.showLoading()
+    });
+
+    fetch(`https://script.google.com/macros/s/AKfycbyVoX-SJHhTTNLvgwnoxY5H5HUZO4L268B-IUqgrIt0YXEj6IhdIonZGL_DyelieujlRA/exec?page=${page}&search=${encodeURIComponent(search)}&role=${role}&userId=${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        data.data.forEach((row, i) => {
+          tbody.innerHTML += `
+            <tr>
+              <td class="px-6 py-3 font-bold">${i + 1 + (page - 1) * 10}</td>
+              <td class="px-6 py-3 font-bold">${row.date}</td>
+              <td class="px-6 py-3 font-bold">${row.recharge}</td>
+              <td class="px-6 py-3 font-bold">${row.used}</td>
+              <td class="px-6 py-3 font-bold">${row.current_balance}</td>
+              <td class="px-6 py-3 font-bold">${row.transaction}</td>
+            </tr>`;
+        });
+
+        currentPage = data.page;
+        totalPages = data.totalPages;
+        totalRecords = data.totalRecords;
+        document.getElementById('pageInfo').innerText =
+          `Page ${currentPage} of ${totalPages} — Total Records: ${totalRecords}`;
+      })
+      .catch(err => {
+        Swal.close();
+        console.error(err);
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Data fetch करने में समस्या हुई।' });
+      });
+  }
+
+  function prevPage() { if (currentPage > 1) loadData(currentPage - 1); }
+  function nextPage() { if (currentPage < totalPages) loadData(currentPage + 1); }
+  function goToPage() {
+    const pageInput = parseInt(document.getElementById('pageNumberInput').value, 10);
+    if (!isNaN(pageInput) && pageInput >= 1 && pageInput <= totalPages) loadData(pageInput);
+    else alert('Please enter a valid page number between 1 and ' + totalPages);
+  }
+
+  loadData(1);
+</script>
+
+</body>
+</html>
