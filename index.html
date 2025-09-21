@@ -1,6 +1,6 @@
 <div id="headerFront"></div>
 
-
+<div id="mainContent" style="display:none"> 
 
 <div class="flex flex-col items-center justify-center  gap-6 p-4">
   <div class="text-center">
@@ -135,24 +135,22 @@
 </div>
 
 <div id="footer"></div>
-
-
-<script>
-  // header.html को लोड कराके div में डाल देगा
+ <script>
+  // पहले header लोड करो
   fetch('headerFront.html')
     .then(response => response.text())
     .then(html => {
       document.getElementById('headerFront').innerHTML = html;
-    })
-    .catch(err => console.error('Header load error', err));
-</script>
+      // header के अंदर जो css/js हैं वो DOM में लग चुके हैं
+      // अब main content दिखा दो
+      document.getElementById('mainContent').style.display = 'block';
 
-<script>
-  // header.html को लोड कराके div में डाल देगा
-  fetch('footer.html')
+      // फिर footer लोड करो
+      return fetch('footer.html');
+    })
     .then(response => response.text())
     .then(html => {
       document.getElementById('footer').innerHTML = html;
     })
-    .catch(err => console.error('Footer load error', err));
+    .catch(err => console.error('Load error', err));
 </script>
