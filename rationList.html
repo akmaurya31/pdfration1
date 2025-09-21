@@ -63,6 +63,16 @@ function loadData(page) {
 
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
+      let pdfCell = '';
+      if (row.pdf_path && row.pdf_path.trim() !== '') {
+        pdfCell = `<td class="px-6 py-3">
+                    <a class="text-blue-500 hover:underline" target="_blank" href="${row.pdf_path}">Download PDF</a>
+                  </td>`;
+      } else {
+        pdfCell = `<td class="px-6 py-3"></td>`; // खाली cell
+      }
+
+
       data.data.forEach((row, i) => {
         tbody.innerHTML += `
           <tr>
@@ -71,9 +81,7 @@ function loadData(page) {
             <td class="px-6 py-3 font-bold">${row.name}</td>
             <td class="px-6 py-3 font-bold">${row.janpad}<br/>${row.edate}</td>
             <td class="px-6 py-3 font-bold">${row.ration}</td>
-            <td class="px-6 py-3">
-              <a class="text-blue-500 hover:underline" target="_blank" href="${row.pdf_path}">Download PDF</a>
-            </td>
+            ${pdfCell}
           </tr>`;
       });
 
