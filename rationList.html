@@ -177,14 +177,19 @@ function loadData(page) {
             ? `<a class="text-blue-500 hover:underline" target="_blank" href="${row.pdf_path}">Download PDF</a>` 
             : ``;
 
+            let btnCheck = '';
+            if (localStorage.getItem('role') === 'admin') {
+                btnCheck = `<button class="neditButton bg-green-500 text-white py-1 px-2 rounded" data-idd="${row.id}">Check Detail</button>`;
+            }
+
         tbody.innerHTML += `
           <tr>
             <td class="px-6 py-3 font-bold">${i + 1 + (page - 1) * 10}</td>
             <td class="px-6 py-3 font-bold">${contact_number}<br/>Balance: ${current_balance}</td>
             <td class="px-6 py-3 font-bold">${row.name}</td>
             <td class="px-6 py-3 font-bold">${row.janpad}<br/>${row.edate}</td>
-            <td class="px-6 py-3 font-bold">${row.ration}
-              <button class="neditButton bg-green-500 text-white py-1 px-2 rounded" data-idd="${row.id}">Check Detail</button>
+            <td class="px-6 py-3 font-bold">${row.ration}${btnCheck}
+              
             </td>
             <td class="px-6 py-3">${pdfCell}</td>
           </tr>`;
