@@ -135,6 +135,8 @@
 </div>
 
 <div id="footer"></div>
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
  <script>
   // पहले header लोड करो
   fetch('headerFront.html')
@@ -153,4 +155,65 @@
       document.getElementById('footer').innerHTML = html;
     })
     .catch(err => console.error('Load error', err));
+</script>
+
+<script>
+document.getElementById('gsForm').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const contact_number = document.getElementById('contact_number').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const dpincode = document.getElementById('dpincode').value.trim();
+  const ip = "103.45.78.12";
+
+  const payload = {
+    name,
+    email,
+    contact_number,
+    password,
+    dpincode,
+    ip
+  };
+
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+
+  const requestOptions = {
+    method: "POST",
+    body: JSON.stringify(payload),
+    redirect: "follow"
+  };
+
+  const apiUrl = "https://script.google.com/macros/s/AKfycbxgDmaCNI2MMK8JL58PCMSNJRaggjBa5sKc9xFxVW23avZQ9OM19U31BeMzwU2SnOGgkg/exec";
+
+  document.querySelector('button[type=submit]').disabled = true;
+
+  fetch(apiUrl, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      console.log("Server Response:", result);
+      Swal.fire({
+        icon: 'success',
+        title: 'Signup Success ✅',
+        text: 'आपका signup सफलतापूर्वक हो गया!',
+        confirmButtonText: 'OK'
+      }).then(() => {
+        document.getElementById('gsForm').reset();
+      });
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Signup Failed ❌',
+        text: 'कुछ गड़बड़ हो गई, कृपया दुबारा कोशिश करें',
+        confirmButtonText: 'OK'
+      });
+    })
+    .finally(() => {
+      document.querySelector('button[type=submit]').disabled = false;
+    });
+});
 </script>
