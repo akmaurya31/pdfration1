@@ -66,7 +66,9 @@
 
 
         <li>
-          <a href="wallet.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">👛Wallet ₹ <span id="roinc">0</span></a>
+          <a href="wallet.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">👛Wallet 
+            ₹ <span id="roinc">0</span>
+          </a>
         </li>
 
         
@@ -120,7 +122,29 @@
       </a>`;
     menuList.appendChild(li);
   }
+
+
+
+     
+  function waitForBalanceAndUpdate1() {
+
+  const interval = setInterval(() => {
+    const balance = localStorage.getItem('current_balance');
+    console.log("Ffff");
+    if (balance !== null) {        // value आ गई
+      document.getElementById('roinc').innerText = balance;
+      clearInterval(interval);     // interval बंद कर दो
+    }
+  }, 100); // हर 100ms में check
+}
+
+// page load पर call करो
+waitForBalanceAndUpdate1();
+
+
 </script>
+
+
 
 
 </body>

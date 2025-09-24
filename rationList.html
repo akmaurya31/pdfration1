@@ -163,7 +163,7 @@ function loadData(page) {
     didOpen: () => { Swal.showLoading(); }
   });
 
-  let s='https://script.google.com/macros/s/AKfycbybXQfGzRULiunBLOJsWgexJZ8ZbRrOBNhQFLKOANA3YB0lIfco7czwXnG7O7Aj_-oNDA/exec';
+  let s='https://script.google.com/macros/s/AKfycbyIpT_lUDwueKOfkFwQm5Byg1W8yZbOjMkcJyODvDlegFQdbUIAwt90dWPAM76NKiIAqA/exec';
   
   fetch(`${s}?page=${page}&search=${encodeURIComponent(search)}&role=${role}&userId=${userId}`)
     .then(res => res.json())
@@ -185,7 +185,7 @@ function loadData(page) {
         tbody.innerHTML += `
           <tr>
             <td class="px-6 py-3 font-bold">${i + 1 + (page - 1) * 10}</td>
-            <td class="px-6 py-3 font-bold">${contact_number}<br/>Balance: ${current_balance}</td>
+            <td class="px-6 py-3 font-bold">${row.contact_number}<br/>Balance: ${row.current_balance}</td>
             <td class="px-6 py-3 font-bold">${row.name}</td>
             <td class="px-6 py-3 font-bold">${row.janpad}<br/>${row.edate}</td>
             <td class="px-6 py-3 font-bold">${row.ration}${btnCheck}
