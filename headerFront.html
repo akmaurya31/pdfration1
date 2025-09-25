@@ -33,21 +33,8 @@
             </a>
             <div class="flex items-center space-x-6 rtl:space-x-reverse">
                 <a href="tel:7518869428" class="text-sm  text-gray-500  hover:underline"> 📞 (91)7518869428</a>
-              
-               <div id="menu"></div>
-
-<script>
-  const menu = document.getElementById("menu");
-  if (localStorage.getItem("id")) {
-    // अगर id है तो Dashboard दिखाओ
-    menu.innerHTML = `<a href="dashboard.html" class="text-sm text-blue-600 hover:underline">Dashboard</a>`;
-  } else {
-    // अगर id नहीं है तो Login दिखाओ
-    menu.innerHTML = `<a href="login.html" class="text-sm text-blue-600 hover:underline">Login</a>`;
-  }
-</script>
-          
-          
+                <a href="dashboard.html" class="text-sm text-blue-600 hover:underline">Dashboard</a>
+                <a href="login.html" class="text-sm text-blue-600 hover:underline">Login</a>
             </div>
         </div>
     </nav>
