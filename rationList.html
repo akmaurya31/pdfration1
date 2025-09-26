@@ -106,7 +106,8 @@ function closeModal(){
 function openRationModal(idd){
   document.getElementById('frid').value = idd;
 
-  const apiUrl = 'https://script.google.com/macros/s/AKfycbylU-edHXOcpyD-QgW46TK_KUilt44uCnJ8y91ZCRR5v7ufL8ExseSFCo86LBfjKqRN_g/exec';
+//  const apiUrl = 'https://script.google.com/macros/s/AKfycbylU-edHXOcpyD-QgW46TK_KUilt44uCnJ8y91ZCRR5v7ufL8ExseSFCo86LBfjKqRN_g/exec';
+const apiUrl='https://script.google.com/macros/s/AKfycbzr70Htu24vHJp_-76csz_77ePKIPUBTAor5qmhKK4PZGC6KPLI3x1iv2PeVYIQtAr5mw/exec';
   fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
