@@ -159,19 +159,19 @@
 
 <script>
 
-  async function getIP() {
+async function getIP() {
   try {
-    // ipify free API
     let res = await fetch("https://api.ipify.org?format=json");
     let data = await res.json();
-    const ip = data.ip; 
-    console.log("Your IP:", ip);
+    return data.ip; // केवल IP return करेगा
   } catch (err) {
     console.error("Error fetching IP:", err);
+    return null;
   }
 }
 
-document.getElementById('gsForm').addEventListener('submit', function(e){
+
+document.getElementById('gsForm').addEventListener('submit', async function(e){
   e.preventDefault();
 
   const name = document.getElementById('name').value.trim();
@@ -179,8 +179,8 @@ document.getElementById('gsForm').addEventListener('submit', function(e){
   const contact_number = document.getElementById('contact_number').value.trim();
   const password = document.getElementById('password').value.trim();
   const dpincode = document.getElementById('dpincode').value.trim();
-  const ip = getIP();
-
+  let ip =  await getIP();
+  
   const payload = {
     name,
     email,
@@ -199,7 +199,7 @@ document.getElementById('gsForm').addEventListener('submit', function(e){
     redirect: "follow"
   };
 
-  const apiUrl = "https://script.google.com/macros/s/AKfycbwtdGNOtb1YVGSe96OwuEggsI2h17rXB7hUTq1Fj5f_UvZfJfjb40QGxXJrkFjGJl1ruQ/exec";
+  const apiUrl = "https://script.google.com/macros/s/AKfycbyIAcJr7IhPA6AmAdspTdaRGb_uAB15APlxZbCVR1yxeGeTeZuggvc13hZZ76Bq9-Fr-g/exec";
 
  // Submit button disable + Loading Alert
 document.querySelector('button[type=submit]').disabled = true;
