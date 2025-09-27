@@ -61,6 +61,7 @@
           <label for="dration_no" class="block text-gray-700 font-bold mb-2">Rashan Card No:</label>
           <input type="text" class="bg-gray-100 border border-gray-300 rounded-lg p-2 w-full" id="dration_no" name="ration_no" placeholder="Enter Your Rashan Card No.">
           <input type="hidden" id="frid" name="rid">
+          <input type="hidden" id="d_user_id" name="d_user_id">
         </div>
         <div class="w-full md:w-1/3 px-2 mb-4 md:mb-0">
           <label for="mukhiya" class="block text-gray-700 font-bold mb-2">Mukhiya Name:</label>
@@ -76,6 +77,19 @@
         <input type="text" class="border border-gray-300 rounded-lg p-2 w-full" id="DrivePath" name="DrivePath" placeholder="Enter or view the drive path">
         <a class="kpdf text-blue-500 hover:underline mt-2 block" href="#" target="_blank" id="driveLink">View DrivePath File</a>
       </div>
+
+      <div class="w-full md:w-1/3 px-2 mt-4 mb-4 md:mb-0">
+        <label class="inline-flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            id="deductBalance" 
+            name="deductBalance" 
+            class="form-checkbox h-5 w-5 text-blue-600"
+          >
+          <span class="text-gray-700 font-bold">Tick करने पर बैलेंस कटेगा</span>
+        </label>
+      </div>
+
       <div class="form-group mt-4">
         <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">Save</button>
       </div>
@@ -89,6 +103,16 @@
 let currentPage = 1;
 let totalPages = 1;
 let totalRecords = 0;
+
+let rationList2="https://script.google.com/macros/s/AKfycbxPe0HQtJWsgPR6v6NeVA0XIYcbtCf3ed0dZuL3jEMsU7OBHaLv1Q3t5isrhSgHvv-MXw/exec";
+//rationList2.gs
+
+let apiUrl = 'https://script.google.com/macros/s/AKfycbylU-edHXOcpyD-QgW46TK_KUilt44uCnJ8y91ZCRR5v7ufL8ExseSFCo86LBfjKqRN_g/exec';
+//getRation.gs
+
+let jqEditRation4="https://script.google.com/macros/s/AKfycby3wL1w52Yp9FmXd6bVVhweapnH5VDJ_M0rMwCJs6RjVwu-pko6r7Z-8xiwEDXNAnSS/exec";
+//jqEditRation4.gs
+
 
 // Load header & footer dynamically
 $(document).ready(function(){
@@ -106,8 +130,6 @@ function closeModal(){
 function openRationModal(idd){
   document.getElementById('frid').value = idd;
 
-const apiUrl = 'https://script.google.com/macros/s/AKfycbylU-edHXOcpyD-QgW46TK_KUilt44uCnJ8y91ZCRR5v7ufL8ExseSFCo86LBfjKqRN_g/exec';
-//const apiUrl='https://script.google.com/macros/s/AKfycbzr70Htu24vHJp_-76csz_77ePKIPUBTAor5qmhKK4PZGC6KPLI3x1iv2PeVYIQtAr5mw/exec';
   fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
@@ -136,18 +158,7 @@ const apiUrl = 'https://script.google.com/macros/s/AKfycbylU-edHXOcpyD-QgW46TK_K
   .catch(err => console.error('Fetch Error:', err));
 }
 
-// Load first row modal on page load
-function openFirstRowModal(){
-  fetch('https://script.google.com/macros/s/AKfycbzDKMeWtA1iy8_HBRJstece3UM8YrSyLY-99dAtmSnVnpCvoUq8hQfpwpydgPKVZTxXpg/exec')
-  .then(res => res.json())
-  .then(data => {
-    if(data && data.length > 0){
-      const firstId = data[0].id;
-      openRationModal(firstId);
-    }
-  })
-  .catch(err => console.error(err));
-}
+ 
 
 // Table data load
 function loadData(page) {
@@ -164,9 +175,7 @@ function loadData(page) {
     didOpen: () => { Swal.showLoading(); }
   });
 
-  let s='https://script.google.com/macros/s/AKfycbzDKMeWtA1iy8_HBRJstece3UM8YrSyLY-99dAtmSnVnpCvoUq8hQfpwpydgPKVZTxXpg/exec';
-  
-  fetch(`${s}?page=${page}&search=${encodeURIComponent(search)}&role=${role}&userId=${userId}`)
+  fetch(`${rationList2}?page=${page}&search=${encodeURIComponent(search)}&role=${role}&userId=${userId}`)
     .then(res => res.json())
     .then(data => {
       Swal.close();
@@ -237,7 +246,7 @@ $('#rationForm').submit(function(event){
 
   $.ajax({
     type: 'POST',
-    url: 'https://script.google.com/macros/s/AKfycbzbA6qZsYHSHAMEZ09dRQ3laXtp-ts1FcpdePa5HARqbV7UMfQb2s4SpEV4b-qMio_A/exec',
+    url: jqEditRation4,
     data: formDataStr,
     contentType: 'application/x-www-form-urlencoded',
     success: function(response){
@@ -254,7 +263,7 @@ $('#rationForm').submit(function(event){
 
 // Initial load
 $(document).ready(function(){
-  openFirstRowModal();
+//  openFirstRowModal();
   loadData(1);
 });
 </script>
