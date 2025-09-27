@@ -54,7 +54,8 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbwYMslYJEbPR_GPGaIbpj12qp6xOun9aMmvtagHzqKloqKhu1Z76MFZk8Tx3tLoHcGPbg/exec";
+const Login2 = "https://script.google.com/macros/s/AKfycbxfLy38UvlYIqDDS96kHOHBwY4yfzsSL0kUFprf1Z0FphsPYirkHVHqeAUFPtdZyW9UBA/exec";
+//Login2.gs
 
 document.getElementById("gsForm").addEventListener("submit", function(e){
   e.preventDefault();
@@ -70,7 +71,7 @@ document.getElementById("gsForm").addEventListener("submit", function(e){
     didOpen: () => Swal.showLoading()
   });
 
-  fetch(scriptURL, {
+  fetch(Login2, {
     method: "POST",
     body: JSON.stringify({ username, password })
   })
@@ -89,6 +90,7 @@ document.getElementById("gsForm").addEventListener("submit", function(e){
       localStorage.setItem('is_login', 'true');
       localStorage.setItem('mynamei1s', 'amri11sh');
       localStorage.setItem('role', u[8]); 
+      localStorage.setItem('current_balance', data.current_balance);
 
       // Success popup
       Swal.fire({
@@ -96,18 +98,13 @@ document.getElementById("gsForm").addEventListener("submit", function(e){
         title: 'Login Successful',
         text: 'Welcome ' + u[1],
         timer: 1500,
-        showConfirmButton: false
+        showConfirmButton: false,
+        timerProgressBar: true
+      }).then(() => {
+        // Redirect to pay.html
+        window.location.href = "pay.html";
       });
 
-      // Wallet balance update + redirect
-      updateWalletBalance(u[0])
-        .then(() => {
-          setTimeout(() => window.location.href = 'pay.html', 1500);
-        })
-        .catch(err => {
-          console.error("wallet fetch error", err);
-          setTimeout(() => window.location.href = 'pay.html', 1500);
-        });
 
     } else {
       Swal.fire({
@@ -128,68 +125,7 @@ document.getElementById("gsForm").addEventListener("submit", function(e){
   });
 });
 
-function updateWalletBalance(userId) {
-  // SweetAlert loader दिखाएँ
-  Swal.fire({
-    title: 'Fetching Wallet Balance...',
-    text: 'कृपया प्रतीक्षा करें',
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
-  });
-
-  return fetch("https://script.google.com/macros/s/AKfycbzR47I7PSpKa-7N6VUfNHJOrXaF3tB7r2_i3odT-D3mW60g-hasS58naltkmgrrwumLDw/exec", {
-    method: "POST",
-    body: JSON.stringify({ action: "getCurWalletCache", userId: userId }),
-  })
-  .then(res => res.json())
-  .then(data => {
-    Swal.close(); // loader बंद करें
-
-    console.log("Wallet response:", data);
-
-    if (data && data.current_balance !== undefined) {
-      const el = document.getElementById('roinc');
-      if (el) el.innerText = data.current_balance;
-
-      localStorage.setItem('current_balance', data.current_balance);
-
-      // SweetAlert success
-      Swal.fire({
-        icon: 'success',
-        title: 'Wallet Updated!',
-        text: `आपका current balance ₹${data.current_balance} है।`,
-        timer: 2000,
-        showConfirmButton: false
-      });
-
-      return data.current_balance;
-    } else {
-      // SweetAlert error
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Wallet balance fetch नहीं हो पाया।'
-      });
-      throw new Error("current_balance missing in response");
-    }
-  })
-  .catch(err => {
-    Swal.close(); // loader बंद करें
-    console.error('Error fetching wallet balance:', err);
-
-    // SweetAlert error
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'Wallet balance fetch करने में समस्या हुई।'
-    });
-
-    return null;
-  });
-}
-
+ 
 </script>
 </body>
 </html>
