@@ -99,6 +99,8 @@
 
 <div id="footer" class="mt-6"></div>
 
+ 
+
 <script>
 let currentPage = 1;
 let totalPages = 1;
@@ -113,9 +115,12 @@ let apiUrl = 'https://script.google.com/macros/s/AKfycbylU-edHXOcpyD-QgW46TK_KUi
 let jqEditRation4="https://script.google.com/macros/s/AKfycby3wL1w52Yp9FmXd6bVVhweapnH5VDJ_M0rMwCJs6RjVwu-pko6r7Z-8xiwEDXNAnSS/exec";
 //jqEditRation4.gs
 
+  
 
 // Load header & footer dynamically
 $(document).ready(function(){
+
+
   $('#header').load('header.html'); 
   $('#footer').load('footer.html');
 });
@@ -141,6 +146,7 @@ function openRationModal(idd){
       document.getElementById('mukhiya').value = data.mukhiya || '';
       document.getElementById('DrivePath').value = data.pdf_path || '';
       document.getElementById('Janpad').value = data.janpad || '';
+      document.getElementById('d_user_id').value =  data.user_id || '';
 
       const linkEl = document.getElementById('driveLink');
       if(data.pdf_path){
