@@ -43,7 +43,7 @@
     </div>
 
     <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
-      <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white" id="menu">
+      <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white" >
         <li>
           <a href="dashboard.html" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0">🎥 Contact</a>
         </li>
@@ -62,11 +62,10 @@
         </li>
 
 
-        <!-- <li>
+        <li id="userListMenu" style="display: none;">
           <a href="userList.html" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">📋User List</a>
-        </li> -->
+        </li>
 
-        <div id="menuList"></div>
 
 
         <li>
@@ -88,23 +87,7 @@
   <div id="secondmenu"></div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  let role = localStorage.getItem("role");
 
-  if (role === "admin") {
-    let menu = document.getElementById("menu");
-    let li = document.createElement("li");
-    li.innerHTML = `
-      <a href="userList.html" 
-         class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 
-                md:hover:bg-transparent md:hover:text-blue-700 md:p-0">
-        UserList
-      </a>`;
-    menu.appendChild(li);
-  }
-});
-</script>
 
 <script>
   // Load external fragments into elements
@@ -128,31 +111,11 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </script>
   <script src="script.js"></script>
-
-
-  <script>
-  const role = localStorage.getItem('role') || 'user'; // user या admin
-  const menuList = document.getElementById('menuList');
-
-  // Admin link केवल अगर role 'admin' है तब दिखाएँ
-  if (role === 'admin') {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <a href="userList.html" 
-         class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0">
-        📋 User List
-      </a>`;
-    menuList.appendChild(li);
-  }
-
-
-
-     
+  <script>     
   function waitForBalanceAndUpdate1() {
 
   const interval = setInterval(() => {
-    const balance = localStorage.getItem('current_balance');
-    console.log("Ffff");
+    const balance = localStorage.getItem('current_balance'); 
     if (balance !== null) {        // value आ गई
       document.getElementById('roinc').innerText = balance;
       clearInterval(interval);     // interval बंद कर दो
@@ -162,6 +125,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // page load पर call करो
 waitForBalanceAndUpdate1();
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const role2 = localStorage.getItem('role') || 'user'; // "admin" ya "user"
+  const userListMenu = document.getElementById('userListMenu');
+  if (role2 == "admin") {
+    userListMenu.style.display = "block"; // dikhega
+  } else {
+    userListMenu.style.display = "none"; // hide hoga
+  }
+});
 
 
 </script>
