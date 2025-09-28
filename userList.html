@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All User List</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-gray-50">
+
+<div id="header"></div>
+
+<div class="container my-4 mx-auto">
+  <h4 class="text-xl text-center bg-blue-500 text-white py-2 my-4 rounded font-bold mx-auto w-[30%]">🧑All User List🧑</h4>
+
+  <!-- Search -->
+  <div class="max-w-[1350px] mx-auto text-center py-2">
+    <input type="text" id="searchInput" placeholder="Search by Name, Email or Mobile" class="border p-2 w-[50%]" />
+    <button onclick="loadUsers(1)" class="bg-blue-500 text-white py-2 px-4 rounded">Search</button>
+  </div>
+
+  <!-- Table -->
+  <div class="max-w-[1350px] mx-auto">
+    <table id="userTable" class="w-full text-sm text-left text-black-500">
+      <thead class="bg-gray-100 border-b border-gray-200">
+        <tr class="text-left">
+          <th class="px-6 py-3 font-bold text-gray-700">No.</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Name / Email</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Address</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Contact</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Plan</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Transaction</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Balance</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Pay Date</th>
+          <th class="px-6 py-3 font-bold text-gray-700">Action</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="flex justify-between items-center mt-4 mx-auto">
+      <span id="pageInfo" class="text-gray-600"></span>
+      <div class="flex items-center space-x-2">
+        <input type="number" id="pageNumberInput" placeholder="Page #" class="border p-1 w-16 text-center">
+        <button onclick="goToPage()" class="bg-green-500 text-white py-1 px-4 rounded">Go</button>
+        <button onclick="prevPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Previous</button>
+        <button onclick="nextPage()" class="bg-blue-500 text-white py-1 px-4 rounded">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Edit Modal -->
+<div id="profileModal" class="hidden fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl mx-auto p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold">Edit Profile</h2>
+      <button onclick="closeProfileModal()" class="text-red-500 font-bold">X</button>
+    </div>
+    <form id="profileForm">
+      <input type="hidden" id="userid" name="userid">
+      <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2">Name</label>
+        <input type="text" id="username" name="name" class="w-full border rounded p-2">
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2">Email</label>
+        <input type="text" id="useremail" name="email" class="w-full border rounded p-2">
+      </div>
+      <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Save</button>
+    </form>
+  </div>
+</div>
+
+<!-- Recharge Modal -->
+<div id="rechargeModal" class="hidden fixed inset-0 z-50 justify-center items-center bg-black bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-lg w-full max-w-md mx-auto p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold">Recharge Wallet</h2>
+      <button onclick="closeRechargeModal()" class="text-red-500 font-bold">X</button>
+    </div>
+    <form id="rechargeForm">
+      <input type="hidden" id="rech_userid" name="userid">
+      <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2">Amount</label>
+        <input type="number" id="rech_amount" name="amount" class="w-full border rounded p-2">
+      </div>
+      <button type="submit" class="bg-purple-500 text-white px-4 py-2 rounded">Recharge</button>
+    </form>
+  </div>
+</div>
+
+<div id="footer" class="mt-6"></div>
+<script>
+// Load header & footer dynamically
+$(document).ready(function(){
+  $('#header').load('header.html'); 
+  $('#footer').load('footer.html');
+});
+ 
+let currentPage = 1, totalPages = 1;
+let userList = "https://script.google.com/macros/s/AKfycbzzsOy8WOeLvXeeYg9_g4b4m6IvSfIByS7fmXgH8QWASkxm3H2tePD4eMqGNUFhUcXKvw/exec";
+
+// role = "admin" या "user"
+let role = "admin"; // ya "user" dynamically set kar sakte ho
+
+async function loadUsers(page = 1) {
+  let search = document.getElementById("searchInput")?.value || "";
+  let tbody = document.getElementById("tableBody");
+
+  // 🚀 Loading indicator
+  tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-blue-600 font-semibold">कृपया प्रतीक्षा करें... डेटा लोड हो रहा है</td></tr>`;
+
+  try {
+    let url = `${userList}?page=${page}&search=${encodeURIComponent(search)}&role=${role}`;
+    let res = await fetch(url, { method: "GET" });
+
+    if (!res.ok) throw new Error("Network response was not ok");
+
+    let data = await res.json();
+
+    renderTable(data.data);       // Apps Script में हमने JSON में "data" key रखी है
+    updatePagination(data.page, data.totalPages);
+  } catch (err) {
+    console.error("Error loading users:", err);
+    tbody.innerHTML =
+      `<tr><td colspan="9" class="text-center py-4 text-red-600">Error loading data</td></tr>`;
+  }
+}
+
+// Table render
+function renderTable(records) {
+  let tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+  if (!records || records.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4">No users found</td></tr>`;
+    return;
+  }
+  records.forEach(row => {
+    tbody.innerHTML += `
+      <tr class="border-b">
+        <td class="px-6 py-3">${row.id}</td>
+        <td class="px-6 py-3">${row.name}<br/>${row.email}<br/>${row.dpincode}</td>
+        <td class="px-6 py-3">${row.address}</td>
+        <td class="px-6 py-3 text-green-700">${row.contact_number}<br/>${row.password}</td>
+        <td class="px-6 py-3">${row.pay}</td>
+        <td class="px-6 py-3">${row.transaction_id}</td>
+        <td class="px-6 py-3">${row.current_balance}</td>
+        <td class="px-6 py-3">${row.pay_date}</td>
+        <td class="px-6 py-3 space-x-2">
+          <button class="bg-green-500 text-white py-1 px-2 rounded" onclick='openProfileModal(${JSON.stringify(row)})'>Edit</button>
+          <button class="bg-purple-500 text-white py-1 px-2 rounded" onclick='openRechargeModal(${row.id})'>Recharge</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+function updatePagination(page, total) {
+  currentPage = page;
+  totalPages = total;
+  document.getElementById("pageInfo").innerText = `Page ${page} of ${total}`;
+}
+
+function prevPage(){ if(currentPage>1) loadUsers(currentPage-1); }
+function nextPage(){ if(currentPage<totalPages) loadUsers(currentPage+1); }
+function goToPage(){
+  let p = parseInt(document.getElementById("pageNumberInput").value);
+  if(p>0 && p<=totalPages) loadUsers(p);
+}
+
+// Page load pe data load karo
+document.addEventListener("DOMContentLoaded", () => loadUsers(1));
+</script>
+    
+</body>
+</html>
