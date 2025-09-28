@@ -94,6 +94,25 @@
 </div>
 
 <div id="footer" class="mt-6"></div>
+
+<!-- Recharge Modal -->
+<div id="rechargeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white p-6 rounded shadow-lg w-80">
+    <h2 class="text-xl font-bold mb-4">Recharge Wallet</h2>
+    <form id="rechargeForm">
+      <input type="hidden" id="rech_userid" name="user_id">
+      <div class="mb-4">
+        <label for="r_amount" class="block mb-1">Amount</label>
+        <input type="number" id="r_amount" name="amount" class="border rounded w-full px-2 py-1" required>
+      </div>
+      <div class="flex justify-end space-x-2">
+        <button type="button" onclick="closeRechargeModal()" class="px-3 py-1 rounded border">Cancel</button>
+        <button type="submit" class="px-3 py-1 rounded bg-blue-500 text-white">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 // Load header & footer dynamically
 $(document).ready(function(){
@@ -101,8 +120,13 @@ $(document).ready(function(){
   $('#footer').load('footer.html');
 });
  
+
+
+
 let currentPage = 1, totalPages = 1;
 let userList = "https://script.google.com/macros/s/AKfycbzzsOy8WOeLvXeeYg9_g4b4m6IvSfIByS7fmXgH8QWASkxm3H2tePD4eMqGNUFhUcXKvw/exec";
+let jqEditRecharge="https://script.google.com/macros/s/AKfycbxIJcNYCd4n8HW8Dt3vzwZvctVMnKzsx3r2_5urmCKEzVOwODcmtGN-78uv8OH5ivWx2Q/exec";
+
 
 // role = "admin" या "user"
 let role = "admin"; // ya "user" dynamically set kar sakte ho
@@ -159,6 +183,20 @@ function renderTable(records) {
   });
 }
 
+
+// Open/Close Modal
+function openRechargeModal(uid){
+  document.getElementById("rech_userid").value = uid;
+  document.getElementById("rechargeModal").classList.remove("hidden");
+}
+
+function closeRechargeModal(){
+  document.getElementById("rechargeModal").classList.add("hidden");
+}
+
+
+
+
 function updatePagination(page, total) {
   currentPage = page;
   totalPages = total;
@@ -174,7 +212,37 @@ function goToPage(){
 
 // Page load pe data load karo
 document.addEventListener("DOMContentLoaded", () => loadUsers(1));
+
+
+// Form Submit
+document.getElementById("rechargeForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+
+  const user_id = document.getElementById("rech_userid").value;
+  const amount = document.getElementById("rech_amount").value;
+
+  try {
+    const response = await fetch(jqEditRecharge, {
+      method: "POST",
+      body: JSON.stringify({user_id, amount}),
+    });
+
+    const resData = await response.json();
+
+    if(resData.status === "success"){
+      alert(`Recharge Successful! Transaction ID: ${resData.transaction_id}`);
+      closeRechargeModal();
+      // Agar table reload karna hai to yahan call karo, eg: loadUsers(currentPage);
+    } else {
+      alert(`Error: ${resData.message}`);
+    }
+
+  } catch(err){
+    alert("Request failed: " + err.message);
+  }
+});
+
 </script>
-    
+
 </body>
 </html>
