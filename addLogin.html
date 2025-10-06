@@ -1,5 +1,5 @@
 <?php
-require_once("dbConnection.php");
+require_once("dbConnection.html");
 session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve username and password from the form
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               $stmt->close();
             // echo "User logged in successfully!";
 
-              header("Location: pay.php");
+              header("Location: pay.html");
               exit;
             // Do something with the user data
 
