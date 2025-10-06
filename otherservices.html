@@ -1,5 +1,6 @@
 <?php include('headerFront.php'); ?>
 
+<div id="headerFront"></div>
 
 
 <style>
@@ -1130,6 +1131,8 @@
       </div>
    </div>
 </div>
+<div id="footer"></div>
+
 
 <script>
         // Disable right-click
@@ -1143,3 +1146,27 @@
         });
     </script>
 <?php include("footer.php");?>
+
+
+  <script>
+  // लोड करने के लिए सभी फाइलों और उनके container id की लिस्ट
+  const includes = [
+    { id: 'secondmenu', file: 'secondmenu.html' },
+    { id: 'header', file: 'header.html' },
+    { id: 'headerFront', file: 'headerFront.html' },
+    { id: 'meta', file: 'meta.html' },
+    // आगे चाहो तो और भी जोड़ सकते हो
+    // { id: 'sidebar', file: 'sidebar.html' },
+  ];
+
+  // loop से सबको लोड करो
+  includes.forEach(item => {
+    fetch(item.file)
+      .then(response => response.text())
+      .then(html => {
+        const el = document.getElementById(item.id);
+        if (el) el.innerHTML = html;
+      })
+      .catch(err => console.error(`${item.file} load error:`, err));
+  });
+</script>
